@@ -16,6 +16,7 @@ const apiKeyInput = document.getElementById('gemini-api-key');
 const gasUrlInput = document.getElementById('gas-url');
 const spreadsheetUrlInput = document.getElementById('spreadsheet-url');
 const saveSettingsBtn = document.getElementById('save-settings-btn');
+const testGasBtn = document.getElementById('test-gas-btn');
 const viewSpreadsheetBtn = document.getElementById('view-spreadsheet-btn');
 
 let stream = null;

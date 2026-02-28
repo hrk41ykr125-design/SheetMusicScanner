@@ -8,6 +8,8 @@ const loadingText = document.getElementById('loading-text');
 
 const resultSection = document.getElementById('result-section');
 const resultTitle = document.getElementById('result-title');
+const resultArtist = document.getElementById('result-artist');
+const resultCategory = document.getElementById('result-category');
 const resultComposer = document.getElementById('result-composer');
 const resultDesc = document.getElementById('result-desc');
 const gasStatusText = document.getElementById('gas-status-text');
@@ -268,6 +270,8 @@ async function processImage(base64Data) {
 
         // 解析成功時のUI表示
         resultTitle.textContent = musicInfo.title;
+        resultArtist.textContent = musicInfo.artist || '不明';
+        resultCategory.textContent = musicInfo.category || 'その他';
         resultComposer.textContent = musicInfo.composer || '不明';
         resultDesc.textContent = musicInfo.description || '情報なし';
 
@@ -308,13 +312,22 @@ async function extractMusicInfoWithGemini(base64Image, apiKey, modelName) {
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${cleanModelName}:generateContent?key=${apiKey}`;
 
     // AIへのプロンプト指示
-    const prompt = `この画像は楽譜の1ページ目です。画像から楽譜の題名（タイトル）を読み取ってください。
-また、その曲の「作曲者」と「楽曲の一般的な概要や背景情報（150文字程度）」をインターネット上の知識から補完し、必ず以下の形式のJSONのみで出力してください。
-Markdownのバッククォート( \`\`\`json )等は絶対に含めず、純粋なJSONテキストのみを返却してください。
+    const prompt = `この画像は楽譜の1ページ目です。画像から楽譜の情報を読み取り、インターネット上の知識で補完して以下のJSON形式で出力してください。
+
+1. title: 曲名（読み取れない場合は'不明'）
+2. artist: アーティスト名。バンド名や演奏者を必ず登録してください。
+3. category: 楽曲の分類。必ず以下のリストから最も適切なものを1つだけ選んでください。該当がない場合は「その他」にしてください。
+   [連弾, ドラマ, クラシック, 子供, CM, メンズ, 映画, アニメ, レディース, 洋楽・インスト, 無印, その他, ジャズ・ラテン, 童謡]
+4. composer: 作曲者名（不明な場合は'不明'）
+5. description: 楽曲の一般的な概要や背景情報（150文字程度）
+
+Markdownのバッククォート等は含めず、純粋なJSONテキストのみを返却してください。
 {
-  "title": "曲名（読み取れない場合は'不明'）",
-  "composer": "作曲者名（不明な場合は'不明'）",
-  "description": "楽曲の概要・情報"
+  "title": "...",
+  "artist": "...",
+  "category": "...",
+  "composer": "...",
+  "description": "..."
 }`;
 
     const payload = {

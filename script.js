@@ -241,7 +241,7 @@ async function processImage(base64Data) {
 
 // --- AI連携: Gemini API 通信 ---
 async function extractMusicInfoWithGemini(base64Image, apiKey) {
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
     // AIへのプロンプト指示
     const prompt = `この画像は楽譜の1ページ目です。画像から楽譜の題名（タイトル）を読み取ってください。

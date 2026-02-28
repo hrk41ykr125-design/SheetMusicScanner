@@ -1,0 +1,15 @@
+/* モバイルでのタップ時のハイライトを無効化 */
+html {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* トースト通知（エラーや成功ポップアップ）のアニメーション用クラス */
+.toast-show {
+    opacity: 1 !important;
+    transform: translate(-50%, -20px) !important;
+}
+
+/* ライブカメラ映像をオブジェクトカバーで表示 */
+video {
+    object-fit: cover;
+}

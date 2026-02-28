@@ -36,7 +36,7 @@ let stream = null;
 
 // デフォルト設定 (埋め込み用)
 const DEFAULT_GEMINI_API_KEY = "AIzaSyBhC3tO4dY_cO57q40Ah7BpiPVdMIcA4fc";
-const DEFAULT_GEMINI_MODEL = "gemini-1.5-flash-latest";
+const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
 const DEFAULT_SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1NNV2TGR2bBqBFYFraGeIiG5Lnk7nOSmc0x1J3V1jUMA/edit?gid=0#gid=0";
 
 // --- 初期化処理 ---

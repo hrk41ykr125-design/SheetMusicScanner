@@ -27,13 +27,28 @@ const DEFAULT_SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1NNV2TGR
 // --- 初期化処理 ---
 document.addEventListener('DOMContentLoaded', () => {
     // ローカルストレージから復元、なければ埋め込みデフォルトを表示
-    const savedApiKey = localStorage.getItem('music_scanner_gemini_key') || DEFAULT_GEMINI_API_KEY;
+    const savedApiKey = localStorage.getItem('music_scanner_gemini_key');
     const savedGasUrl = localStorage.getItem('music_scanner_gas_url');
-    const savedSheetUrl = localStorage.getItem('music_scanner_spreadsheet_url') || DEFAULT_SPREADSHEET_URL;
-    if (savedApiKey) apiKeyInput.value = savedApiKey;
+    const savedSheetUrl = localStorage.getItem('music_scanner_spreadsheet_url');
+
+    apiKeyInput.value = savedApiKey || DEFAULT_GEMINI_API_KEY;
     if (savedGasUrl) gasUrlInput.value = savedGasUrl;
-    if (savedSheetUrl) spreadsheetUrlInput.value = savedSheetUrl;
+    spreadsheetUrlInput.value = savedSheetUrl || DEFAULT_SPREADSHEET_URL;
+
+    // スプレッドシートを表示ボタンの初期有効化
+    updateViewSpreadsheetBtn();
 });
+
+function updateViewSpreadsheetBtn() {
+    if (spreadsheetUrlInput.value.trim()) {
+        viewSpreadsheetBtn.classList.remove('opacity-50', 'pointer-events-none');
+    } else {
+        viewSpreadsheetBtn.classList.add('opacity-50', 'pointer-events-none');
+    }
+}
+
+// 入力時にボタンの状態を更新
+spreadsheetUrlInput.addEventListener('input', updateViewSpreadsheetBtn);
 
 // 設定保存
 saveSettingsBtn.addEventListener('click', () => {

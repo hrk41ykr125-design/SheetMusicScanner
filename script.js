@@ -256,11 +256,22 @@ async function saveToSpreadsheet(musicInfo, gasUrl) {
         throw new Error('GASへの通信に失敗しました。Webアプリ設定とURLを確認してください。');
     }
 
-    const result = await response.json().catch(() => ({ status: 'unknown' }));
-    if (result.status === 'error') {
-        throw new Error('シートへの追記中にエラー: ' + result.message);
+    try {
+        const text = await response.text();
+        // もしGAS側でエラー(HTMLのログイン画面等)が返ってきた場合、JSONパースでエラーになる
+        const result = JSON.parse(text);
+
+        if (result.status === 'error') {
+            throw new Error('シートへの追記中にエラー: ' + result.message);
+        }
+        return result;
+    } catch (e) {
+        if (e.message.includes('シートへの追記中にエラー')) {
+            throw e;
+        }
+        console.error("GAS Parse Error or Invalid Response:", e);
+        throw new Error('スプレッドシートへの保存に失敗しました。GASのデプロイで「アクセスできるユーザー」が「全員」になっているか確認してください。');
     }
-    return result;
 }
 
 // --- UIヘルパー関数 (トースト通知等) ---

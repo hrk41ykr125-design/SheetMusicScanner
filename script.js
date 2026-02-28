@@ -164,7 +164,11 @@ async function processImage(base64Data) {
 
         // [Step 2] GAS経由でスプレッドシートに保存
         updateLoadingText('データ保存中...');
-        await saveToSpreadsheet(musicInfo, gasUrl);
+        const payloadToGas = {
+            ...musicInfo,
+            sheetUrl: spreadsheetUrlInput.value.trim()
+        };
+        await saveToSpreadsheet(payloadToGas, gasUrl);
 
         // 保存成功時の表示
         gasStatusText.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-1 text-lg"></i>完了：スプレッドシートに保存しました';

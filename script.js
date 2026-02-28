@@ -1,8 +1,6 @@
 // --- DOM要素の取得 ---
 const video = document.getElementById('camera-preview');
-const startCameraBtn = document.getElementById('start-camera-btn');
 const captureBtn = document.getElementById('capture-btn');
-const fileInput = document.getElementById('file-input');
 const loadingOverlay = document.getElementById('loading-overlay');
 const loadingText = document.getElementById('loading-text');
 
@@ -22,6 +20,11 @@ const spreadsheetUrlInput = document.getElementById('spreadsheet-url');
 const saveSettingsBtn = document.getElementById('save-settings-btn');
 const testGasBtn = document.getElementById('test-gas-btn');
 const viewSpreadsheetBtn = document.getElementById('view-spreadsheet-btn');
+
+// アコーディオン用要素
+const settingsToggleBtn = document.getElementById('settings-toggle-btn');
+const settingsContent = document.getElementById('settings-content');
+const settingsChevron = document.getElementById('settings-chevron');
 
 let stream = null;
 
@@ -45,6 +48,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // スプレッドシートを表示ボタンの初期有効化
     updateViewSpreadsheetBtn();
+
+    // カメラの自動起動
+    startCameraAutomatically();
+});
+
+// 設定アコーディオンの開閉
+settingsToggleBtn.addEventListener('click', () => {
+    settingsContent.classList.toggle('hidden');
+    if (settingsContent.classList.contains('hidden')) {
+        settingsChevron.style.transform = 'rotate(0deg)';
+    } else {
+        settingsChevron.style.transform = 'rotate(180deg)';
+    }
 });
 
 function updateViewSpreadsheetBtn() {
@@ -164,7 +180,7 @@ fetchModelsBtn.addEventListener('click', async () => {
 });
 
 // --- カメラ制御 ---
-startCameraBtn.addEventListener('click', async () => {
+async function startCameraAutomatically() {
     try {
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
@@ -177,27 +193,11 @@ startCameraBtn.addEventListener('click', async () => {
         video.srcObject = stream;
         captureBtn.disabled = false;
         resultSection.classList.add('hidden');
-        showToast('カメラを起動しました', 'info');
     } catch (err) {
         console.error("Camera Error:", err);
-        showToast('カメラへのアクセスが拒否されたか、利用できません。ファイル選択をお試しください。', 'error');
+        showToast('カメラの起動に失敗しました。ブラウザのカメラ許可設定を確認してください。', 'error');
     }
-});
-
-// ファイル選択からの取得（フォールバック）
-fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        // 画像が巨大だとAPI制限・タイムアウトに引っかかるためリサイズする
-        resizeImageAndProcess(event.target.result);
-    };
-    reader.readAsDataURL(file);
-    resultSection.classList.add('hidden');
-    fileInput.value = ''; // 連続で同じファイルを選べるようにリセット
-});
+}
 
 // ライブカメラからのスキャンボタン
 captureBtn.addEventListener('click', () => {

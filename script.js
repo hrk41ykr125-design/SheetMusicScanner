@@ -20,12 +20,16 @@ const viewSpreadsheetBtn = document.getElementById('view-spreadsheet-btn');
 
 let stream = null;
 
+// デフォルト設定 (埋め込み用)
+const DEFAULT_GEMINI_API_KEY = "AIzaSyBhC3tO4dY_cO57q40Ah7BpiPVdMIcA4fc";
+const DEFAULT_SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1NNV2TGR2bBqBFYFraGeIiG5Lnk7nOSmc0x1J3V1jUMA/edit?gid=0#gid=0";
+
 // --- 初期化処理 ---
 document.addEventListener('DOMContentLoaded', () => {
-    // ローカルストレージからAPIキー等の設定を復元
-    const savedApiKey = localStorage.getItem('music_scanner_gemini_key');
+    // ローカルストレージから復元、なければ埋め込みデフォルトを表示
+    const savedApiKey = localStorage.getItem('music_scanner_gemini_key') || DEFAULT_GEMINI_API_KEY;
     const savedGasUrl = localStorage.getItem('music_scanner_gas_url');
-    const savedSheetUrl = localStorage.getItem('music_scanner_spreadsheet_url');
+    const savedSheetUrl = localStorage.getItem('music_scanner_spreadsheet_url') || DEFAULT_SPREADSHEET_URL;
     if (savedApiKey) apiKeyInput.value = savedApiKey;
     if (savedGasUrl) gasUrlInput.value = savedGasUrl;
     if (savedSheetUrl) spreadsheetUrlInput.value = savedSheetUrl;

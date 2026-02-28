@@ -14,6 +14,7 @@ const gasStatusText = document.getElementById('gas-status-text');
 
 const apiKeyInput = document.getElementById('gemini-api-key');
 const modelInput = document.getElementById('gemini-model');
+const fetchModelsBtn = document.getElementById('fetch-models-btn');
 const gasUrlInput = document.getElementById('gas-url');
 const spreadsheetUrlInput = document.getElementById('spreadsheet-url');
 const saveSettingsBtn = document.getElementById('save-settings-btn');
@@ -103,6 +104,59 @@ testGasBtn.addEventListener('click', async () => {
         }
     } catch (e) {
         showToast('GAS接続失敗: ' + e.message, 'error');
+        console.error(e);
+    }
+});
+
+// --- Geminiモデル一覧の動的取得 ---
+fetchModelsBtn.addEventListener('click', async () => {
+    const apiKey = apiKeyInput.value.trim();
+    if (!apiKey) return showToast('先にAPIキーを入力してください', 'error');
+
+    showToast('利用可能なモデルを取得中...', 'info');
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+        if (!response.ok) {
+            let errMessage = `HTTP ${response.status}`;
+            try {
+                const errData = await response.json();
+                if (errData.error && errData.error.message) errMessage = errData.error.message;
+            } catch (e) { }
+            throw new Error(errMessage);
+        }
+
+        const data = await response.json();
+        // 画像生成(generateContent)をサポートしているモデルをフィルタ
+        const supportedModels = data.models.filter(m => m.supportedGenerationMethods.includes('generateContent'));
+
+        if (supportedModels.length === 0) throw new Error('対応モデルが見つかりません');
+
+        // 現在の選択を記憶
+        const currentVal = modelInput.value;
+
+        // 取得したモデルでプルダウンを再構築
+        modelInput.innerHTML = '';
+        supportedModels.forEach(m => {
+            const cleanName = m.name.replace('models/', '');
+            const option = document.createElement('option');
+            option.value = cleanName;
+            // flashという文字が含まれていればおすすめ表示
+            option.textContent = cleanName + (cleanName.includes('flash') ? ' (おすすめ)' : '');
+            modelInput.appendChild(option);
+        });
+
+        // 以前の選択があれば復元
+        if (Array.from(modelInput.options).some(o => o.value === currentVal)) {
+            modelInput.value = currentVal;
+        } else {
+            // なければ flash系の最新を優先選択
+            const flashOpt = Array.from(modelInput.options).find(o => o.value.includes('flash'));
+            if (flashOpt) modelInput.value = flashOpt.value;
+        }
+
+        showToast(`${supportedModels.length}件のモデルを取得しました`, 'success');
+    } catch (e) {
+        showToast('モデル取得に失敗: ' + e.message, 'error');
         console.error(e);
     }
 });

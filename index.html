@@ -29,12 +29,19 @@
             <h2 class="text-sm font-semibold mb-3 border-b pb-2 text-gray-600"><i
                     class="fa-solid fa-gear mr-2"></i>システム設定 (初回のみ)</h2>
             <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-medium text-gray-500">Google Gemini API キー</label>
+                <div class="mb-4">
+                    <label for="gemini-api-key" class="block text-sm font-medium text-gray-700">Google Gemini API
+                        キー</label>
                     <input type="password" id="gemini-api-key" placeholder="AIzaSy..."
                         class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
                 </div>
-                <div>
+                <!-- 追加: AIモデル名 -->
+                <div class="mb-4">
+                    <label for="gemini-model" class="block text-sm font-medium text-gray-700">Gemini モデル名</label>
+                    <input type="text" id="gemini-model" placeholder="gemini-1.5-flash"
+                        class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                </div>
+                <div class="mb-4">
                     <label class="block text-xs font-medium text-gray-500">GAS Webアプリ URL</label>
                     <input type="url" id="gas-url" placeholder="https://script.google.com/macros/s/.../exec"
                         class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">

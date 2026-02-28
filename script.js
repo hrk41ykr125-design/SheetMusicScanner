@@ -61,11 +61,44 @@ saveSettingsBtn.addEventListener('click', () => {
 
 // スプレッドシートを表示
 viewSpreadsheetBtn.addEventListener('click', () => {
-    const url = spreadsheetUrlInput.value.trim();
+    const url = spreadsheetUrlInput.value.trim() || DEFAULT_SPREADSHEET_URL;
     if (url) {
         window.open(url, '_blank');
     } else {
         showToast('スプレッドシートURLが設定されていません', 'error');
+    }
+});
+
+// GAS接続テスト
+testGasBtn.addEventListener('click', async () => {
+    const gasUrl = gasUrlInput.value.trim();
+    if (!gasUrl) return showToast('GAS URLを入力してください', 'error');
+
+    showToast('GAS接続テスト中...', 'info');
+    try {
+        const response = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+                title: "TEST",
+                composer: "DEBUG",
+                description: "Connection test",
+                sheetUrl: spreadsheetUrlInput.value.trim() || DEFAULT_SPREADSHEET_URL
+            })
+        });
+        const text = await response.text();
+        if (text.includes('Sign in - Google Accounts')) {
+            throw new Error("Googleログイン画面が返されました。「アクセスできるユーザー」を「全員」にしてください。");
+        }
+        const res = JSON.parse(text);
+        if (res.status === 'success') {
+            showToast('GAS接続成功！スプレッドシートを確認してください', 'success');
+        } else {
+            throw new Error(res.message);
+        }
+    } catch (e) {
+        showToast('GAS接続失敗: ' + e.message, 'error');
+        console.error(e);
     }
 });
 

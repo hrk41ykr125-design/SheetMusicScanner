@@ -14,7 +14,9 @@ const gasStatusText = document.getElementById('gas-status-text');
 
 const apiKeyInput = document.getElementById('gemini-api-key');
 const gasUrlInput = document.getElementById('gas-url');
+const spreadsheetUrlInput = document.getElementById('spreadsheet-url');
 const saveSettingsBtn = document.getElementById('save-settings-btn');
+const viewSpreadsheetBtn = document.getElementById('view-spreadsheet-btn');
 
 let stream = null;
 
@@ -23,15 +25,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // ローカルストレージからAPIキー等の設定を復元
     const savedApiKey = localStorage.getItem('music_scanner_gemini_key');
     const savedGasUrl = localStorage.getItem('music_scanner_gas_url');
+    const savedSheetUrl = localStorage.getItem('music_scanner_spreadsheet_url');
     if (savedApiKey) apiKeyInput.value = savedApiKey;
     if (savedGasUrl) gasUrlInput.value = savedGasUrl;
+    if (savedSheetUrl) spreadsheetUrlInput.value = savedSheetUrl;
 });
 
 // 設定保存
 saveSettingsBtn.addEventListener('click', () => {
     localStorage.setItem('music_scanner_gemini_key', apiKeyInput.value.trim());
     localStorage.setItem('music_scanner_gas_url', gasUrlInput.value.trim());
+    localStorage.setItem('music_scanner_spreadsheet_url', spreadsheetUrlInput.value.trim());
     showToast('設定をデバイスに保存しました', 'success');
+});
+
+// スプレッドシートを表示
+viewSpreadsheetBtn.addEventListener('click', () => {
+    const url = spreadsheetUrlInput.value.trim();
+    if (url) {
+        window.open(url, '_blank');
+    } else {
+        showToast('スプレッドシートURLが設定されていません', 'error');
+    }
 });
 
 // --- カメラ制御 ---

@@ -26,6 +26,12 @@ const settingsToggleBtn = document.getElementById('settings-toggle-btn');
 const settingsContent = document.getElementById('settings-content');
 const settingsChevron = document.getElementById('settings-chevron');
 
+// ログイン画面用要素
+const loginScreen = document.getElementById('login-screen');
+const appContent = document.getElementById('app-content');
+const loginPassword = document.getElementById('login-password');
+const loginBtn = document.getElementById('login-btn');
+
 let stream = null;
 
 // デフォルト設定 (埋め込み用)
@@ -49,9 +55,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // スプレッドシートを表示ボタンの初期有効化
     updateViewSpreadsheetBtn();
 
-    // カメラの自動起動
-    startCameraAutomatically();
+    // ログイン状態の確認
+    if (sessionStorage.getItem('music_scanner_auth') === 'true') {
+        showAppContent();
+    } else {
+        // 未ログイン時はEnterキーでログイン実行できるようにする
+        loginPassword.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+    }
 });
+
+// ログイン処理
+loginBtn.addEventListener('click', handleLogin);
+
+function handleLogin() {
+    const pwd = loginPassword.value;
+    if (pwd === 'rainbow') {
+        sessionStorage.setItem('music_scanner_auth', 'true');
+        showAppContent();
+        loginPassword.value = '';
+    } else {
+        showToast('パスワードが間違っています', 'error');
+        loginPassword.value = '';
+        loginPassword.focus();
+    }
+}
+
+function showAppContent() {
+    loginScreen.classList.add('hidden');
+    appContent.classList.remove('hidden');
+    // アプリ画面表示時にカメラを自動起動
+    startCameraAutomatically();
+}
 
 // 設定アコーディオンの開閉
 settingsToggleBtn.addEventListener('click', () => {
